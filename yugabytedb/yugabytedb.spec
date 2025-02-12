@@ -91,6 +91,12 @@ sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabyte
 # chown -R yugabyte:yugabyte . %{buildroot}/etc/yugabytedb %{buildroot}/var/log/yugabytedb %{buildroot}/var/lib/yugabytedb
 
 # Find dead symlinks and repoint them to right path
+ls %{buildroot}%{appdir}
+ls %{buildroot}%{appdir}/linuxbrew/
+ls %{buildroot}%{appdir}/linuxbrew/Cellar/
+ls %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/
+ls %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/6.1/
+ls %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/6.1/share/
 cd %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/6.1/share/terminfo/
 find . -xtype l -exec bash -c 'ln -sfr $(readlink {}|cut -d"/" -f11-) {};' \;
  
