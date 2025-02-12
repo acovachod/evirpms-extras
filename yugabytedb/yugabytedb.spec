@@ -95,6 +95,8 @@ sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabyte
 # chown -R yugabyte:yugabyte . %{buildroot}/etc/yugabytedb %{buildroot}/var/log/yugabytedb %{buildroot}/var/lib/yugabytedb
 
 # Find dead symlinks and repoint them to right path
+ls /builddir/build/BUILDROOT/yugabytedb-2024.2.1.0-1.el9.x86_64/opt/yugabytedb/bin/patchelf
+
 cd %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/6.1/share/terminfo/
 find . -xtype l -exec bash -c 'ln -sfr $(readlink {}|cut -d"/" -f11-) {};' \;
  
