@@ -69,7 +69,7 @@ mkdir -p %{buildroot}/usr/bin
 mkdir -p %{buildroot}%{appdir}
 mkdir -p %{buildroot}%{appdir}/bin
 mkdir -p %{buildroot}%{appdir}/tools
-
+mkdir -p %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/6.1/share/terminfo/
 
 %{__install} -m 644 %{SOURCE1} %{buildroot}/lib/systemd/system/yugabyted.service
 %{__install} -d -m 640 %{buildroot}/var/log/yugabytedb
