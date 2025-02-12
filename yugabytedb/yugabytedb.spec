@@ -94,18 +94,12 @@ sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabyte
 
 # chown -R yugabyte:yugabyte . %{buildroot}/etc/yugabytedb %{buildroot}/var/log/yugabytedb %{buildroot}/var/lib/yugabytedb
 
-echo "Debugging step 1 - After finding dead symlinks"
-
 %{__install} -m 755 %{SOURCE3} %{buildroot}/opt/yugabytedb/bin/post_client_install.sh
 
 find /builddir/build/BUILDROOT/yugabytedb-%{version}-1.el9.x86_64/opt/yugabytedb/bin/
 
-echo "Debugging step 2 - After finding yugabytedb binaries"
-
 %clean
 # noop
-
-echo "Debugging step 3 - After cleaning"
 
 %pre server
 getent group yugabyte >/dev/null 2>&1 || groupadd -r -g 301 yugabyte 
@@ -117,9 +111,6 @@ getent passwd yugabyte >/dev/null || \
 	-s /sbin/nologin \
     	-c "YugaByte database" yugabyte
 
-
-echo "Debugging step 4 - After PRE SERVER"
-
 %pre client
 getent group yugabyte >/dev/null 2>&1 || groupadd -r -g 301 yugabyte 
 getent passwd yugabyte >/dev/null || \
@@ -129,8 +120,6 @@ getent passwd yugabyte >/dev/null || \
 	-d /var/lib/yugabytedb \
 	-s /sbin/nologin \
     	-c "YugaByte database" yugabyte
-		
-echo "Debugging step 5 - After PRE CLIENT"
 
 %post server
 mkdir /var/lib/yugabytedb
@@ -204,4 +193,3 @@ fi
 /opt/yugabytedb/lib/yb/*
 /opt/yugabytedb/lib/yb-thirdparty/*
 /opt/yugabytedb/postgres/lib/*
-
