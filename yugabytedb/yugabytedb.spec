@@ -1,23 +1,23 @@
-
 # Use md5 file digest method. 
 # The first macro is the one used in RPM v4.9.1.1
 %define _binary_filedigest_algorithm 1
 # This is the macro I find on OSX when Homebrew provides rpmbuild (rpm v5.4.14)
 %define _build_binary_file_digest_algo 1
+%define debug_package %{nil}
 
 # Use gzip payload compression
 %define _binary_payload w9.gzdio 
-
+%define _build_id_links none
 %define appdir /opt/yugabytedb
 
-%global debug_package %{nil}
 %global __strip /bin/true
 %global __jar_repack /bin/true
 
 Name: yugabytedb
-Version: 2.5.2.0
+Version: 2024.2.1.0
+%define subversion b185
 Release: 1%{?dist}
-Source0: https://downloads.yugabyte.com/yugabyte-%{version}-linux.tar.gz
+Source0: https://downloads.yugabyte.com/releases/%{version}/yugabyte-%{version}-%{subversion}-linux-x86_64.tar.gz
 Source1: yugabyted.service
 Source2: yugabytedb.conf
 Source3: yugabyte-client-post_install.sh
@@ -33,7 +33,7 @@ YugabyteDB is a free and open-source, distributed, relational, NewSQL database m
 
 %package server
 Summary: YugabyteDB is a free and open-source, distributed, relational, NewSQL database management system
-Requires: python python-libs python-devel python2-pip
+Requires: python python-libs python-devel python3-pip
 Requires: procps-ng
 %if 0%{?rhel} < 8
 BuildRequires: systemd
@@ -67,23 +67,36 @@ mkdir -p %{buildroot}/etc/yugabytedb
 mkdir -p %{buildroot}/lib/systemd/system
 mkdir -p %{buildroot}/usr/bin
 mkdir -p %{buildroot}%{appdir}
+mkdir -p %{buildroot}%{appdir}/bin
+mkdir -p %{buildroot}%{appdir}/tools
 
 
 %{__install} -m 644 %{SOURCE1} %{buildroot}/lib/systemd/system/yugabyted.service
 %{__install} -d -m 640 %{buildroot}/var/log/yugabytedb
 %{__install} -d -m 640 %{buildroot}/var/lib/yugabytedb
-ls -l %{buildroot} %{buildroot}/etc %{buildroot}/etc/yugabytedb
 %{__install} -m 640 %{SOURCE2} %{buildroot}/etc/yugabytedb/yugabytedb.conf
 ln -s "%{appdir}/bin/yugabyted" "%{buildroot}/usr/bin/yugabyted"
 ln -s "%{appdir}/bin/cqlsh" "%{buildroot}/usr/bin/cqlsh"
 ln -s "%{appdir}/bin/ysqlsh" "%{buildroot}/usr/bin/ysqlsh"
 ln -s "%{appdir}/bin/ycqlsh" "%{buildroot}/usr/bin/ycqlsh"
 
-#chown -R 301:301 . %{buildroot}/etc/yugabytedb %{buildroot}/var/log/yugabytedb %{buildroot}/var/lib/yugabytedb
+mv -f * %{buildroot}%{appdir}/
+sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabytedb/bin/yugabyted
+sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabytedb/bin/yb-ctl
+sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabytedb/tools/yb-prof.py
+sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabytedb/tools/k8s_preflight.py
+sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabytedb/tools/k8s_parent.py
+sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabytedb/tools/k8s_ybc_parent.py
 
-mv * %{buildroot}%{appdir}/
+# chown -R yugabyte:yugabyte . %{buildroot}/etc/yugabytedb %{buildroot}/var/log/yugabytedb %{buildroot}/var/lib/yugabytedb
 
+# Find dead symlinks and repoint them to right path
+cd %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/6.1/share/terminfo/
+find . -xtype l -exec bash -c 'ln -sfr $(readlink {}|cut -d"/" -f11-) {};' \;
+ 
 %{__install} -m 755 %{SOURCE3} %{buildroot}/opt/yugabytedb/bin/post_client_install.sh
+
+find /builddir/build/BUILDROOT/yugabytedb-%{version}-1.el9.x86_64/opt/yugabytedb/bin/
 
 %clean
 # noop
@@ -98,6 +111,7 @@ getent passwd yugabyte >/dev/null || \
 	-s /sbin/nologin \
     	-c "YugaByte database" yugabyte
 
+
 %pre client
 getent group yugabyte >/dev/null 2>&1 || groupadd -r -g 301 yugabyte 
 getent passwd yugabyte >/dev/null || \
@@ -109,7 +123,8 @@ getent passwd yugabyte >/dev/null || \
     	-c "YugaByte database" yugabyte
 
 %post server
-
+mkdir /var/lib/yugabytedb
+chown -R yugabyte:yugabyte /etc/yugabytedb /var/log/yugabytedb /var/lib/yugabytedb
 # post_install.sh is required after upgrade of the package
 if [ -f "%{appdir}/.post_install.sh.completed" ]; then
   rm "%{appdir}/.post_install.sh.completed"
@@ -148,10 +163,9 @@ fi
 %files server
 %defattr(-,root,root,-)
 %dir %attr(755,root,root) /etc/yugabytedb
-%config(noreplace) %attr(640,301,301) /etc/yugabytedb/yugabytedb.conf
+%config(noreplace) %attr(640,yugabyte,yugabyte) /etc/yugabytedb/yugabytedb.conf
 %dir /opt/yugabytedb
-%dir %attr(750,301,301) /var/log/yugabytedb
-%dir %attr(750,301,301) /var/lib/yugabytedb
+%dir %attr(750,yugabyte,yugabyte) /var/log/yugabytedb
 /lib/systemd/system/yugabyted.service
 /usr/bin/yugabyted
 /opt/yugabytedb/*
