@@ -98,16 +98,18 @@ sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabyte
 cd %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/6.1/share/terminfo/
 find . -xtype l -exec bash -c 'ln -sfr $(readlink {}|cut -d"/" -f11-) {};' \;
  
-echo "Debuggin step 1 - After finding dead symlinks"
+echo "Debugging step 1 - After finding dead symlinks"
+
 %{__install} -m 755 %{SOURCE3} %{buildroot}/opt/yugabytedb/bin/post_client_install.sh
 
 find /builddir/build/BUILDROOT/yugabytedb-%{version}-1.el9.x86_64/opt/yugabytedb/bin/
-echo "Debuggin step 2 - After finding yugabytedb binaries"
+
+echo "Debugging step 2 - After finding yugabytedb binaries"
 
 %clean
 # noop
 
-echo "Debuggin step 3 - After cleaning"
+echo "Debugging step 3 - After cleaning"
 
 %pre server
 getent group yugabyte >/dev/null 2>&1 || groupadd -r -g 301 yugabyte 
@@ -120,7 +122,7 @@ getent passwd yugabyte >/dev/null || \
     	-c "YugaByte database" yugabyte
 
 
-echo "Debuggin step 4 - After PRE SERVER"
+echo "Debugging step 4 - After PRE SERVER"
 
 %pre client
 getent group yugabyte >/dev/null 2>&1 || groupadd -r -g 301 yugabyte 
@@ -132,7 +134,7 @@ getent passwd yugabyte >/dev/null || \
 	-s /sbin/nologin \
     	-c "YugaByte database" yugabyte
 		
-echo "Debuggin step 5 - After PRE CLIENT"
+echo "Debugging step 5 - After PRE CLIENT"
 
 %post server
 mkdir /var/lib/yugabytedb
