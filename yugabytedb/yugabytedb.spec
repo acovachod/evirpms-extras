@@ -98,6 +98,7 @@ sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabyte
 cd %{buildroot}%{appdir}/linuxbrew/Cellar/ncurses/6.1/share/terminfo/
 find . -xtype l -exec bash -c 'ln -sfr $(readlink {}|cut -d"/" -f11-) {};' \;
  
+echo "Debuggin step 1 - After find"
 %{__install} -m 755 %{SOURCE3} %{buildroot}/opt/yugabytedb/bin/post_client_install.sh
 
 find /builddir/build/BUILDROOT/yugabytedb-%{version}-1.el9.x86_64/opt/yugabytedb/bin/
