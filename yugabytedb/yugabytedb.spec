@@ -92,6 +92,9 @@ sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabyte
 sed -i 's/.*#!.*python.*/\#!\/usr\/bin\/env\ python3/' %{buildroot}/opt/yugabytedb/postgres/bin/vacuum_maintenance.py
 
 # chown -R yugabyte:yugabyte . %{buildroot}/etc/yugabytedb %{buildroot}/var/log/yugabytedb %{buildroot}/var/lib/yugabytedb
+ls %{buildroot}
+ls %{buildroot}/opt/
+ls %{buildroot}/opt/yugabytedb/
 chmod 666  %{buildroot}/opt/yugabytedb/openssl-config/*
 
 %{__install} -m 755 %{SOURCE3} %{buildroot}/opt/yugabytedb/bin/post_client_install.sh
