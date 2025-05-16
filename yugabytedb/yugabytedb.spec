@@ -186,7 +186,6 @@ fi
 /opt/yugabytedb/postgres/bin/ysql_dumpall
 /opt/yugabytedb/postgres/bin/pg_restore
 /opt/yugabytedb/postgres/bin/pg_isready
-/opt/yugabytedb/postgres/bin/pg_standby
 /opt/yugabytedb/lib/*.zip
 /opt/yugabytedb/lib/yb/*
 /opt/yugabytedb/lib/yb-thirdparty/*
