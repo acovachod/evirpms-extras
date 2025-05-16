@@ -26,7 +26,7 @@ LimitLOCKS=infinity
 ExecStart=/usr/bin/python /opt/yugabytedb/bin/yugabyted start --config /etc/yugabytedb/yugabytedb.conf
 PIDFile=/var/lib/yugabytedb/data/yugabyted.pid
 TimeoutStartSec=5min
-ExecStop=/usr/bin/python /opt/yugabytedb/bin/yugabyted stop --config /etc/yugabytedb/yugabytedb.conf
+ExecStop=/usr/bin/python /opt/yugabytedb/bin/yugabyted stop
 TimeoutStopSec=10
 SuccessExitStatus=SIGKILL
 
