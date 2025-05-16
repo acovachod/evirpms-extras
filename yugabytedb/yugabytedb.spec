@@ -167,7 +167,6 @@ fi
 /lib/systemd/system/yugabyted.service
 /usr/bin/yugabyted
 /opt/yugabytedb/*
-chmod 666 /opt/yugabytedb/openssl-config/*
 
 %files client
 %defattr(-,root,root,-)
