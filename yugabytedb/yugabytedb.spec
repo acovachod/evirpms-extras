@@ -14,7 +14,7 @@
 %global __jar_repack /bin/true
 
 Name: yugabytedb
-Version: 2024.2.3.1
+Version: 2025.1.1.2
 %define subversion b3
 Release: 1%{?dist}
 Source0: https://downloads.yugabyte.com/releases/%{version}/yugabyte-%{version}-%{subversion}-linux-x86_64.tar.gz
